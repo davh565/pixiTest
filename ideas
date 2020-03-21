@@ -1,0 +1,97 @@
+GridTile Objects:
+
+	UI:
+        Left Mouse:
+            press:
+                Tokens;
+                    Pickup Tokens
+                Tile:
+                    Release Tokens
+            release:
+            hold:
+            hover:
+                Tokens:
+                    Show StatblockBasic
+        Right Mouse:
+            press:
+                Tokens
+            release:
+            hold:
+        Middle Mouse:
+            press:
+                Tokens
+            release:
+            hold:
+        MWheel Up:
+            press:
+                Tokens:
+                    If Held, Rotate Left
+            release:
+            hold:
+        MWheel Dn:
+            press:
+                Tokens
+                    If Held, Rotate Right
+            release:
+            hold:
+
+	Campaigns:
+		Collection of Assets: []
+        Scenes: []
+            Grid:
+                Move:
+                Scale:
+                Type:
+                    Square:
+                        Tile:
+                            Index:
+                            Visibility: 
+                                true
+                                false
+                                fog
+                            Collide: 
+                                true,
+                                false,
+                                whitelist,
+                                blacklist             
+                    Hex:
+                Tile:[][]
+                    Index:
+                    Visibility: 
+                        true
+                        false
+                        fog
+                    Collide: 
+                        true,
+                        false,
+                        whitelist []
+                        blacklist []
+                    Occupants: []            
+                
+            Sprites: 
+                Tokens:
+                    Players
+                        Instance
+                        StatblockFull {}
+                    NPC/Monster
+                        Template
+                        Instance
+                        StatblockBasic {}
+                    Items
+                        Template
+                        Instance
+                    Traps
+                    Interactables
+                Props:
+            Backgrounds:
+                Select
+                Scale
+                Expand Edges
+                Filters: 
+                    greyscale,
+                    colour,
+                    shader
+                
+		
+	
+	
