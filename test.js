@@ -131,7 +131,7 @@ farhad = new Sprite(
   app.stage.addChild(player);
   app.stage.addChild(farhad);
 
-app.ticker.add(delta => gameLoop(delta));
+app.ticker.add(delta => mainLoop(delta));
 }
 let left = keyboard("ArrowLeft"),
       up = keyboard("ArrowUp"),
@@ -189,7 +189,7 @@ let left = keyboard("ArrowLeft"),
   };
 
 
-function gameLoop(delta){
+function mainLoop(delta){
   player.x += player.vx;
   player.y += player.vy
 

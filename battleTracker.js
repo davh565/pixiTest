@@ -28,10 +28,11 @@ let Application = PIXI.Application,
     document.body.appendChild(app.view);
 
     loader 
-    .add("images/assets.json")
+    .add("images/tokens/farhad.png")
+    .add("images/map1.jpg")
     .load(setup);
 
-    let state, tokens, campaigns, chapters, grids, props, backgrounds;
+    let state, tokens, campaigns, chapters, grids, props, backgrounds, farhad;
 
     function setup(){
 
@@ -39,39 +40,37 @@ let Application = PIXI.Application,
 chapter = new Container();
 app.stage.addChild(chapter);
 
-//Create an alias for the texture atlas frame ids
-id = resources["images/assets.json"].textures;
+// Create an alias for the texture atlas frame ids
+// id = resources["images/assets.json"].textures;
 
 
 //%ASSET%
-%ASSET%= new Sprite(id["%ASSET%.png"]);
-%ASSET%.x = 68;
-%ASSET%.y =  chapter.height / 2 - chapter.height / 2;
-%ASSET%.vx = 0;
-%ASSET%.vy = 0;
-chapter.addChild(%ASSET%);
+//BACKGROUND
+background = new Sprite(
+    resources["images/map1.jpg"].texture
+  );
+chapter.addChild(background);
 
-//Token Spawner
-let numTokens= 6,
-    spacing = 48,
-    xOffset = 150,
-    speed = 2,
-    direction = 1;
-tokens= [];
-for (let i = 0; i < numTokens; i++) {
+farhad = new Sprite(resources["images/tokens/farhad.png"].texture);
+farhad.scale.set(0.25,0.25)
+farhad.x = 68;
+farhad.y =  height / 2;
+farhad.vx = 1;
+farhad.vy = 0;
+chapter.addChild(farhad);
 
-    //Make a Token
-    let token= new Sprite(id["token.png"]);
-    blob.x = x;
-    blob.y = y;
-    tokens.push(token);
-    chapter.addChild(token);
-}
-
-%%%%%%%
-//add UI input capture
-%%%%%%%
-
+//GRID
+let grid = new PIXI.Graphics();
+  grid.lineStyle(1, 0xFFFFFF, 0.25);
+  
+  for (i = 0; i < width/tileSize; i++) {
+    for (j = 0; j < height/tileSize; j++) {
+      grid.moveTo(i*tileSize, j*tileSize);
+      grid.lineTo((i+1)*tileSize, (j)*tileSize);
+      grid.lineTo((i+1)*tileSize, (j+1)*tileSize);
+    }  
+  }
+chapter.addChild(grid);
 state = play;
 //Start the game loop 
 app.ticker.add(delta => mainLoop(delta));
@@ -89,6 +88,8 @@ function mainLoop(delta){
 //Play
 /////////////////////////////////////////////////////////
 function play(delta) {
+    farhad.x += farhad.vx;
+    farhad.y += farhad.vy;
     //add contain function
     contain(tokens)
     //add loop actions
