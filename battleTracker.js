@@ -31,13 +31,15 @@ let t = new Tink(PIXI, app.renderer.view);
 document.body.appendChild(app.view);
 loader 
   .add("images/tokens/farhad.png")
+  .add("images/tokens/KEVIN.png")
   .add("images/map1.jpg")
   .add("images/ui/baseline_add_white_18dp.png")
   .add("images/ui/baseline_delete_white_18dp.png")
   .load(setup);
 
-let state, tokens, campaigns, chapters, grids, props, backgrounds, farhad;
+let state, token, campaigns, chapters, grids, props, backgrounds, farhad;
 let pointer, hilight;
+tokens = []
 
 function setup(){
 
@@ -55,16 +57,22 @@ app.stage.addChild(chapter);
 background = new Sprite(resources["images/map1.jpg"].texture);
 chapter.addChild(background);
 
-farhad = new Sprite(resources["images/tokens/farhad.png"].texture);
-farhad.scale.set(0.25,0.25);
-farhad.x = 68;
-farhad.y =  height / 2;
-farhad.vx = 1;
-farhad.vy = 0;
-farhad.isClicked=false;
-farhad.wasClicked=false;
-t.makeDraggable(farhad);
-chapter.addChild(farhad);
+// farhad = new Sprite(resources["images/tokens/farhad.png"].texture);
+// farhad.scale.set(0.25,0.25);
+// farhad.x = 68;
+// farhad.y =  height / 2;
+// farhad.vx = 1;
+// farhad.vy = 0;
+// farhad.isClicked=false;
+// farhad.wasClicked=false;
+// t.makeDraggable(farhad);
+// chapter.addChild(farhad);
+
+
+
+makeToken(token,64,128);
+makeToken(token,512,64);
+
 
 //GRID
 let grid = new PIXI.Graphics();
@@ -112,15 +120,30 @@ chapter.addChild(deleteToken);
   //INPUT
   pointer = t.makePointer();
   // pointer.press = () => {
-  //   if (pointer.hitTestSprite(farhad)){
-  //     // if (!farhad.isClicked)farhad.isClicked = true;
+  //   if (pointer.hitTestSprite(token)){
+  //     // if (!token.isClicked)token.isClicked = true;
   //   }
-  //   else if (farhad.isClicked) farhad.isClicked = false;
+  //   else if (token.isClicked) token.isClicked = false;
   // }
   
   state = play;
   //Start the game loop 
   app.ticker.add(delta => mainLoop(delta));
+}
+
+function makeToken(token,x,y){
+  token = new Sprite(resources["images/tokens/KEVIN.png"].texture);
+  token.scale.set(0.25,0.25);
+token.x = x;
+token.y = y;
+token.vx = 1;
+token.vy = 0;
+token.isClicked=false;
+token.wasClicked=false;
+t.makeDraggable(token);
+chapter.addChild(token);
+  console.log(token)
+  tokens.push(token)
 }
 /////////////////////////////////////////////////////////
 //mainLoop
@@ -135,49 +158,53 @@ function mainLoop(delta){
 //Play
 /////////////////////////////////////////////////////////
 function play(delta) {
-  // farhad.x += farhad.vx;
-  // farhad.y += farhad.vy;
+  // token.x += token.vx;
+  // token.y += token.vy;
   //add contain function
   contain(tokens)
   //add loop actions
-  if (pointer.hitTestSprite(farhad)) {
-    if (pointer.isDown){
-
-      hilight.alpha=0.5;
-      hilight.x = parseInt(pointer.x/tileSize)*tileSize;
-      hilight.y = parseInt(pointer.y/tileSize)*tileSize;
+  for(token in tokens){
+    if (pointer.hitTestSprite(tokens[token])) {
+      if (pointer.isDown){
+  
+        hilight.alpha=0.5;
+        hilight.x = parseInt(pointer.x/tileSize)*tileSize;
+        hilight.y = parseInt(pointer.y/tileSize)*tileSize;
+        
+        tokens[token].scale.set(0.30,0.30);
+        tokens[token].x -= 6;
+        tokens[token].y -= 6;
+        tokens[token].isDragging = true;
+        
+      } 
       
-      farhad.scale.set(0.30,0.30);
-      farhad.x -= 6;
-      farhad.y -= 6;
-      farhad.isDragging = true;
-      
-    } 
-    
-    else {
-      farhad.scale.set(0.25,0.25);
-      if (farhad.isDragging){
-        hilight.alpha=0;
-        farhad.x = parseInt(pointer.x/tileSize)*tileSize;
-        farhad.y = parseInt(pointer.y/tileSize)*tileSize;
-        // farhad.x += 6;
-        // farhad.y += 6;
-        farhad.isDragging = false;
-
+      else {
+        tokens[token].scale.set(0.25,0.25);
+        if (token.isDragging){
+          hilight.alpha=0;
+          tokens[token].x = parseInt(pointer.x/tileSize)*tileSize;
+          tokens[token].y = parseInt(pointer.y/tileSize)*tileSize;
+          // token.x += 6;
+          // token.y += 6;
+          tokens[token].isDragging = false;
+  
+        }
       }
+      //   //Display a hand icon while the pointer is over the sprite
+      pointer.cursor = "pointer";
     }
-    //   //Display a hand icon while the pointer is over the sprite
-    pointer.cursor = "pointer";
+
   }
+  
   // console.log(hilight)
   // hilight.x = parseInt(pointer.x/tileSize)*tileSize;
   // hilight.y = parseInt(pointer.y/tileSize)*tileSize;
   // else {
   //   pointer.cursor = "auto";
   // }
-  // if (farhad.isClicked){
-  //   farhad.x = pointer.x-tileSize/2;
-  //   farhad.y = pointer.y-tileSize/2;
+  // if (token.isClicked){
+  //   token.x = pointer.x-tileSize/2;
+  //   token.y = pointer.y-tileSize/2;
   // }
 }
 
