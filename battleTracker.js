@@ -32,6 +32,8 @@ document.body.appendChild(app.view);
 loader 
   .add("images/tokens/farhad.png")
   .add("images/map1.jpg")
+  .add("images/ui/baseline_add_white_18dp.png")
+  .add("images/ui/baseline_delete_white_18dp.png")
   .load(setup);
 
 let state, tokens, campaigns, chapters, grids, props, backgrounds, farhad;
@@ -66,24 +68,46 @@ chapter.addChild(farhad);
 
 //GRID
 let grid = new PIXI.Graphics();
-  grid.lineStyle(1, 0xFFFFFF, 0.25);
-  
-  for (i = 0; i < width/tileSize; i++) {
-    for (j = 0; j < height/tileSize; j++) {
-      grid.moveTo(i*tileSize, j*tileSize);
-      grid.lineTo((i+1)*tileSize, (j)*tileSize);
-      grid.lineTo((i+1)*tileSize, (j+1)*tileSize);
-    }  
-  }
-  chapter.addChild(grid);
+grid.lineStyle(1, 0xFFFFFF, 0.25);
 
-  hilight = new PIXI.Graphics();
-  hilight.beginFill(0xFFFFFF);
-  // console.log(hilight)
-  hilight.alpha = 0;
-  hilight.drawRect(0,0,64,64);
-  hilight.endFill();
-  chapter.addChild(hilight);
+for (i = 0; i < width/tileSize; i++) {
+  for (j = 0; j < height/tileSize; j++) {
+    grid.moveTo(i*tileSize, j*tileSize);
+    grid.lineTo((i+1)*tileSize, (j)*tileSize);
+    grid.lineTo((i+1)*tileSize, (j+1)*tileSize);
+  }  
+}
+chapter.addChild(grid);
+
+hilight = new PIXI.Graphics();
+hilight.beginFill(0xFFFFFF);
+// console.log(hilight)
+hilight.alpha = 0;
+hilight.drawRect(0,0,64,64);
+hilight.endFill();
+chapter.addChild(hilight);
+
+topBar = new PIXI.Graphics();
+topBar.beginFill(0x444444);
+// console.log(topBar)
+topBar.alpha = 1;
+topBar.drawRect(0,0,width,64);
+topBar.endFill();
+chapter.addChild(topBar);
+
+addToken = new Sprite(resources["images/ui/baseline_add_white_18dp.png"].texture);
+addToken.scale.set(1,1);
+addToken.x = 14;
+addToken.y =  14;
+chapter.addChild(addToken);
+t.makeInteractive(addToken);
+addToken.press = ()=>console.log("add Token")
+
+deleteToken = new Sprite(resources["images/ui/baseline_delete_white_18dp.png"].texture);
+deleteToken.scale.set(1,1);
+deleteToken.x = width/2;
+deleteToken.y =  14;
+chapter.addChild(deleteToken);
 
   //INPUT
   pointer = t.makePointer();
