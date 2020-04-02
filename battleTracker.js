@@ -15,7 +15,6 @@ const height = 1024;
 let tileSize = 64;
 let moveSize = tileSize/2;
 
-//Create a Pixi Application
 let app = new Application({ 
   width: width, 
   height: height,                       
@@ -23,8 +22,6 @@ let app = new Application({
   transparent: false, 
   resolution: 1
 });
-// console.log(app.renderer)
-
 
 let t = new Tink(PIXI, app.renderer.view);
 
@@ -47,45 +44,14 @@ function setup(){
 chapter = new Container();
 app.stage.addChild(chapter);
 
-// Create an alias for the texture atlas frame ids
-// id = resources["images/assets.json"].textures;
-
-
-//%ASSET%
-//BACKGROUND
-
 background = new Sprite(resources["images/map1.jpg"].texture);
 chapter.addChild(background);
-
-// farhad = new Sprite(resources["images/tokens/farhad.png"].texture);
-// farhad.scale.set(0.25,0.25);
-// farhad.x = 68;
-// farhad.y =  height / 2;
-// farhad.vx = 1;
-// farhad.vy = 0;
-// farhad.isClicked=false;
-// farhad.wasClicked=false;
-// t.makeDraggable(farhad);
-// chapter.addChild(farhad);
-
-
-
 makeToken(token,64,128);
 makeToken(token,512,64);
 
-
 //GRID
-let grid = new PIXI.Graphics();
-grid.lineStyle(1, 0xFFFFFF, 0.25);
-
-for (i = 0; i < width/tileSize; i++) {
-  for (j = 0; j < height/tileSize; j++) {
-    grid.moveTo(i*tileSize, j*tileSize);
-    grid.lineTo((i+1)*tileSize, (j)*tileSize);
-    grid.lineTo((i+1)*tileSize, (j+1)*tileSize);
-  }  
-}
-chapter.addChild(grid);
+setupGrid()
+setupTokens()
 
 hilight = new PIXI.Graphics();
 hilight.beginFill(0xFFFFFF);
@@ -103,19 +69,7 @@ topBar.drawRect(0,0,width,64);
 topBar.endFill();
 chapter.addChild(topBar);
 
-addToken = new Sprite(resources["images/ui/baseline_add_white_18dp.png"].texture);
-addToken.scale.set(1,1);
-addToken.x = 14;
-addToken.y =  14;
-chapter.addChild(addToken);
-t.makeInteractive(addToken);
-addToken.press = ()=>console.log("add Token")
 
-deleteToken = new Sprite(resources["images/ui/baseline_delete_white_18dp.png"].texture);
-deleteToken.scale.set(1,1);
-deleteToken.x = width/2;
-deleteToken.y =  14;
-chapter.addChild(deleteToken);
 
   //INPUT
   pointer = t.makePointer();
@@ -124,7 +78,7 @@ chapter.addChild(deleteToken);
   //     // if (!token.isClicked)token.isClicked = true;
   //   }
   //   else if (token.isClicked) token.isClicked = false;
-  // }
+  // }z
   
   state = play;
   //Start the game loop 
@@ -134,17 +88,18 @@ chapter.addChild(deleteToken);
 function makeToken(token,x,y){
   token = new Sprite(resources["images/tokens/KEVIN.png"].texture);
   token.scale.set(0.25,0.25);
-token.x = x;
-token.y = y;
-token.vx = 1;
-token.vy = 0;
-token.isClicked=false;
-token.wasClicked=false;
-t.makeDraggable(token);
-chapter.addChild(token);
+  token.x = x;
+  token.y = y;
+  token.vx = 1;
+  token.vy = 0;
+  token.isClicked=false;
+  token.wasClicked=false;
+  t.makeDraggable(token);
+  chapter.addChild(token);
   console.log(token)
   tokens.push(token)
 }
+
 /////////////////////////////////////////////////////////
 //mainLoop
 /////////////////////////////////////////////////////////
@@ -217,6 +172,41 @@ function contain(){
 }
 function collide(){
 
+}
+
+function setupUI(){
+  
+}
+function setupGrid(){
+  let grid = new PIXI.Graphics();
+  grid.lineStyle(1, 0xFFFFFF, 0.25);
+  
+  for (i = 0; i < width/tileSize; i++) {
+    for (j = 0; j < height/tileSize; j++) {
+      grid.moveTo(i*tileSize, j*tileSize);
+      grid.lineTo((i+1)*tileSize, (j)*tileSize);
+      grid.lineTo((i+1)*tileSize, (j+1)*tileSize);
+    }  
+  }
+  chapter.addChild(grid);
+  console.log("setup grid complete")
+  
+}
+function setupTokens(){
+  addToken = new Sprite(resources["images/ui/baseline_add_white_18dp.png"].texture);
+  addToken.scale.set(1,1);
+  addToken.x = 14;
+  addToken.y =  14;
+  chapter.addChild(addToken);
+  t.makeInteractive(addToken);
+  addToken.press = ()=>console.log("add Token")
+  
+  deleteToken = new Sprite(resources["images/ui/baseline_delete_white_18dp.png"].texture);
+  deleteToken.scale.set(1,1);
+  deleteToken.x = width/2;
+  deleteToken.y =  14;
+  chapter.addChild(deleteToken);
+  console.log("setup tokens complete")
 }
 //Add keyboard/mouse helper functions as needed
 //Add Event listeners
