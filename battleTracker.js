@@ -37,8 +37,17 @@ loader
 let state, token, campaigns, chapter, grid,grids, props, background, farhad
 let pointer, hilight
 tokens = []
-
+let oldcoords
 function setup(){
+  function setupInput() {
+    pointer = t.makePointer()
+    pointer.coords = {
+      scale: tileSize,
+      x: null,
+      y: null,
+    }
+    console.log("setup input complete")
+  }
   function setupUI(){
     hilight = new PIXI.Graphics()
     hilight.beginFill(0xFFFFFF)
@@ -76,44 +85,37 @@ console.log("setup UI complete")
   let gridHeight = height/tileSize 
   grid.lineStyle(1, 0xFFFFFF, 0.25)
   grid.tile = createArray(gridWidth,gridHeight)
-  console.log(grid.tile)
-  let coords = []
+  // console.log(grid.tile)
+  let coords = {}
 
   for (i = 0; i < gridWidth; i++) {
     for (j = 0; j < gridHeight; j++) {
-      grid.moveTo(i*tileSize, j*tileSize)
-      grid.lineTo((i+1)*tileSize, (j)*tileSize)
-      grid.lineTo((i+1)*tileSize, (j+1)*tileSize)
-      
-      coords = i+","+j
-      occupants = []
+      // setup data structure
+      coords.x = i
+      coords.y = j
+      occupants = {}
       selected = false
       hovered = false
       clicked = false
 
       grid.tile[i][j] = {coords,occupants,selected,hovered,clicked}
+      //draw gridlines
+      grid.moveTo(i*tileSize, j*tileSize)
+      grid.lineTo((i+1)*tileSize, (j)*tileSize)
+      grid.lineTo((i+1)*tileSize, (j+1)*tileSize)
 
     }  
   }
   chapter.addChild(grid)
   console.log("setup grid complete")
   
-  }
+}
   function setupTokens(){
   makeToken(token,64,128)
   makeToken(token,512,64)
   console.log("setup tokens complete")
   }
-  function setupInput() {
-    pointer = t.makePointer()
-    // pointer.press = () => {
-      //   if (pointer.hitTestSprite(token)){
-        //     // if (!token.isClicked)token.isClicked = true
-        //   }
-        //   else if (token.isClicked) token.isClicked = false
-    // }z
-    console.log("setup input complete")
-  }
+  
   function setupChapter(){
     chapter = new Container()
     app.stage.addChild(chapter)
@@ -124,9 +126,9 @@ console.log("setup UI complete")
     chapter.addChild(background)
     console.log("setup background complete")
   }
-  function makeToken(token,x,y){
+  function makeToken(token,x,y,scale = 0.25){
     token = new Sprite(resources["images/tokens/KEVIN.png"].texture)
-    token.scale.set(0.25,0.25)
+    token.scale.set(scale,scale)
     token.x = x
     token.y = y
     token.vx = 1
@@ -147,6 +149,7 @@ console.log("setup UI complete")
   state = loop
   //Start the game loop 
   app.ticker.add(delta => mainLoop(delta))
+
 }
 
 /////////////////////////////////////////////////////////
@@ -162,13 +165,18 @@ function mainLoop(delta){
 //loop
 /////////////////////////////////////////////////////////
 function loop(delta) {
-  function loopInput(){}
+  function loopInput(){
+    pointer.coords.x = pointer.x/tileSize
+    pointer.coords.y = pointer.y/tileSize
+    // console.log(pointer.coords,pointer.x,pointer.y)
+  }
   function loopChapter(){}
   function loopBackground(){}
   function loopGrid(){}
   function loopUI(){}
   function loopTokens(){
     let lock = false
+
     for(token in tokens){
       if (pointer.hitTestSprite(tokens[token])) {
         if (true){
@@ -235,5 +243,6 @@ function createArray(length) {
 
   return arr;
 }
+
 //Add keyboard/mouse helper functions as needed
 //Add Event listeners
