@@ -46,6 +46,7 @@ function setup(){
       x: null,
       y: null,
     }
+    pointer.occupants = {}
     console.log("setup input complete")
   }
   function setupUI(){
@@ -128,6 +129,7 @@ console.log("setup UI complete")
   }
   function makeToken(token,x,y,scale = 0.25){
     token = new Sprite(resources["images/tokens/KEVIN.png"].texture)
+    addContainer(token,[ parseInt(x/tileSize),parseInt(y/tileSize)])
     token.scale.set(scale,scale)
     token.x = x
     token.y = y
@@ -243,6 +245,12 @@ function createArray(length) {
 
   return arr;
 }
+function addContainer(container, destination){
+  grid.tile[destination[0]][destination[1]]=container
+  console.log(grid.tile[destination[0]][destination[1]])
 
+}
+function removeContainer(){container, location}
+function moveContainer(){container, location, destination}
 //Add keyboard/mouse helper functions as needed
 //Add Event listeners
