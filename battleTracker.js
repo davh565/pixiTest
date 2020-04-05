@@ -246,7 +246,12 @@ function createArray(length) {
   return arr;
 }
 function addContainer(container, destination){
+  container.coords = {
+    x: destination[0],
+    y: destination[1],
+  }
   grid.tile[destination[0]][destination[1]]=container
+
   console.log(grid.tile[destination[0]][destination[1]])
 
 }
