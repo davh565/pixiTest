@@ -1,50 +1,94 @@
 let battleTracker = {}
 let bt = battleTracker
 
+let stage
+let loader = PIXI.Loader.shared
+
 let tileSize = 64
-let gridWidth = 3
-let gridHeight = 3
+let width = 512
+let height = 512
+let gridWidth = width/tileSize
+let gridHeight = height/tileSize
+
 
 tokens = {}
+backgrounds = {}
 containers = {}
 pointers = {}
 
+let app = new PIXI.Application({
+    width: width,
+    height: height,
+})
+document.body.appendChild(app.view)
+loader
+    .add("images/map1.jpg")
+    .add("images/tokens/KEVIN.png")
+    .add("images/ui/baseline_add_white_18dp.png")
+    .add("images/ui/baseline_delete_white_18dp.png")
+    .load(setup)
+
 function setup(){
+    setupStage()
+    setupBackground()
+    setupContainers()
+    setupTokens()
+    setupPointers()
+
+    console.log("setup complete")
+    function setupStage(){
+        stage = new PIXI.Container()
+        app.stage.addChild(stage)
+    }
+    function setupBackground(){
+        let background = {
+            type: "background",
+            render: new PIXI.Sprite(loader.resources["images/map1.jpg"].texture)
+        }
+        stage.addChild(background.render)
+        addId(background,backgrounds)
+        console.log("setupBackground Complete")
+        console.log(backgrounds)
+    }
     function setupContainers(){
         function setupGrid(){
             let grid = {
-                type: "grid"
+                type: "grid",
+                render: new PIXI.Graphics()
             }
+            grid.render.lineStyle(1, 0xFFFFFF, 0.5)
+
             for (u = 0; u<gridWidth;u++){
                 for (v=0;v<gridHeight;v++){
                     let id = "tile"+
                     hexify(u)+
                     hexify(v)
-
+                    
                     grid[id] = {
                         id: id,
                         u: u,
                         v: v,
                         occupants: {}
                     }
-                    }
-                }
-                addId(grid,containers)
-            }
 
+                    grid.render.moveTo(u*tileSize, v*tileSize)
+                    grid.render.lineTo((u+1)*tileSize, (v)*tileSize)
+                    grid.render.lineTo((u+1)*tileSize, (v+1)*tileSize)
+                }
+            }
+            addId(grid,containers)
+            stage.addChild(grid.render)
+        }
         setupGrid()
     }
     function setupTokens(){
         addToken("Bob",["grid00","tile0001"])
-        addToken("Bob",["grid00","tile0101"])
-        addToken("Bill",["grid00","tile0101"])
+        addToken("Bob",["grid00","tile0306"])
+        addToken("Bill",["grid00","tile0203"],2)
     }
     function setupPointers(){}
-    setupContainers()
-    setupTokens()
-    setupPointers()
-    console.log("setup complete")
 }
+
 function loop(){
     function loopContainers(){}
     function loopTokens(){}
@@ -53,14 +97,21 @@ function loop(){
     loopContainers()
     loopPointers()
 }
-function addToken(type,location){
+function addToken(type,location, size = 1){
     // location: [%CONTAINER%,%SLOT%]
     let container = location[0]
     let slot = location[1]
     let token = {
         type: type,
-        location: location
+        location: location,
+        size: size,
+        render: new PIXI.Sprite(loader.resources["images/tokens/KEVIN.png"].texture)
     }
+    token.render.scale.set(size*tileSize/token.render.width)
+    let address = parseAddress(token.location[1])
+    token.render.x = address[0]*tileSize
+    token.render.y = address[1]*tileSize
+    stage.addChild(token.render)
     addId(token,tokens)
     containers[container][slot].occupants[token.id] = token
 }
@@ -104,11 +155,7 @@ function addId(object, destination){
 function hexify (input){
     return input.toString(16).padStart(2,0)
 }
-//
-
-setup()
-moveToken("Bob00",['grid00',"tile0202"])
-console.log(containers.grid00)
-deleteToken("Bob00")
-console.log(containers.grid00)
-while(true) loop()
+function parseAddress (address) {
+    return        [Number(address.substr(address.length-4,2)),
+         Number(address.substr(address.length-2,2))]
+}
