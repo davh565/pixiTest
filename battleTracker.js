@@ -86,7 +86,7 @@ console.log("setup UI complete")
   let gridHeight = height/tileSize 
   grid.lineStyle(1, 0xFFFFFF, 0.25)
   grid.tile = createArray(gridWidth,gridHeight)
-  // console.log(grid.tile)
+  // console.log(grid.tile)z
   let coords = {}
 
   for (i = 0; i < gridWidth; i++) {

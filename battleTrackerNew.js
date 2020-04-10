@@ -36,6 +36,7 @@ function setup(){
     setupPointers()
 
     console.log("setup complete")
+
     function setupStage(){
         stage = new PIXI.Container()
         app.stage.addChild(stage)
@@ -60,17 +61,13 @@ function setup(){
 
             for (u = 0; u<gridWidth;u++){
                 for (v=0;v<gridHeight;v++){
-                    let id = "tile"+
-                    hexify(u)+
-                    hexify(v)
-                    
+                    let id = "tile" + hexify(u) + hexify(v)
                     grid[id] = {
-                        id: id,
+                        id:  id,
                         u: u,
                         v: v,
                         occupants: {}
                     }
-
                     grid.render.moveTo(u*tileSize, v*tileSize)
                     grid.render.lineTo((u+1)*tileSize, (v)*tileSize)
                     grid.render.lineTo((u+1)*tileSize, (v+1)*tileSize)
@@ -90,12 +87,13 @@ function setup(){
 }
 
 function loop(){
-    function loopContainers(){}
-    function loopTokens(){}
-    function loopPointers(){}
     loopTokens()
     loopContainers()
     loopPointers()
+
+    function loopContainers(){}
+    function loopTokens(){}
+    function loopPointers(){}
 }
 function addToken(type,location, size = 1){
     // location: [%CONTAINER%,%SLOT%]
@@ -156,6 +154,6 @@ function hexify (input){
     return input.toString(16).padStart(2,0)
 }
 function parseAddress (address) {
-    return        [Number(address.substr(address.length-4,2)),
-         Number(address.substr(address.length-2,2))]
+    return [Number(address.substr(address.length-4,2)),
+            Number(address.substr(address.length-2,2))]
 }
