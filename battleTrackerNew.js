@@ -11,6 +11,8 @@ let gridWidth = width/tileSize
 let gridHeight = height/tileSize
 
 
+
+
 tokens = {}
 backgrounds = {}
 containers = {}
@@ -21,6 +23,7 @@ let app = new PIXI.Application({
     height: height,
 })
 document.body.appendChild(app.view)
+let t = new Tink(PIXI, app.renderer.view)
 loader
     .add("images/map1.jpg")
     .add("images/tokens/KEVIN.png")
@@ -34,8 +37,9 @@ function setup(){
     setupContainers()
     setupTokens()
     setupPointers()
+    moveToken("Bob01","grid00","tile0707")
+    deleteToken("Bob01")
 
-    console.log("setup complete")
 
     function setupStage(){
         stage = new PIXI.Container()
@@ -48,8 +52,6 @@ function setup(){
         }
         stage.addChild(background.render)
         addId(background,backgrounds)
-        console.log("setupBackground Complete")
-        console.log(backgrounds)
     }
     function setupContainers(){
         function setupGrid(){
@@ -103,7 +105,8 @@ function addToken(type,location, size = 1){
         type: type,
         location: location,
         size: size,
-        render: new PIXI.Sprite(loader.resources["images/tokens/KEVIN.png"].texture)
+        render: new PIXI.Sprite(
+            loader.resources["images/tokens/KEVIN.png"].texture)
     }
     token.render.scale.set(size*tileSize/token.render.width)
     let address = parseAddress(token.location[1])
@@ -113,19 +116,27 @@ function addToken(type,location, size = 1){
     addId(token,tokens)
     containers[container][slot].occupants[token.id] = token
 }
-function moveToken(tokenId,destination){
+function moveToken(tokenId,destContainer,destSlot){
     let origin = tokens[tokenId].location
+    let originAddress = containers[origin[0]][origin[1]]
+    let destinationAddress = containers[destContainer][destSlot]
     
-    tokens[tokenId].location = destination
+    tokens[tokenId].location = [destContainer, destSlot]
     
-    containers[destination[0]][destination[1]].occupants[tokenId] =
-    containers[origin[0]][origin[1]].occupants[tokenId]
-    delete containers[origin[0]][origin[1]].occupants[tokenId]
+    destinationAddress.occupants[tokenId] = originAddress.occupants[tokenId]
+    delete originAddress.occupants[tokenId]
+
+    tokens[tokenId].render.x = destinationAddress.u * tileSize
+    tokens[tokenId].render.y = destinationAddress.v * tileSize
+
+
 }
 function deleteToken(tokenId){
     let origin = tokens[tokenId].location
     delete containers[origin[0]][origin[1]].occupants[tokenId]
     delete tokens[tokenId]
+
+    console.log(stage)
     
 
 }
