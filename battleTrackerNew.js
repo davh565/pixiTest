@@ -1,5 +1,6 @@
 /////
 //cleanup later
+// loader assets
 let hilight, pointer, lastCoord
 /////
 
