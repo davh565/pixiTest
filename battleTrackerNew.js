@@ -40,6 +40,8 @@ function setup(){
     moveToken("Bob01","grid00","tile0707")
     deleteToken("Bob01")
 
+    app.ticker.add(() => loop())
+
 
     function setupStage(){
         stage = new PIXI.Container()
@@ -50,8 +52,10 @@ function setup(){
             type: "background",
             render: new PIXI.Sprite(loader.resources["images/map1.jpg"].texture)
         }
-        stage.addChild(background.render)
         addId(background,backgrounds)
+        background.render.id = background.id
+        background.render.stageIndex = stage.children.length
+        stage.addChild(background.render)
     }
     function setupContainers(){
         function setupGrid(){
@@ -76,6 +80,8 @@ function setup(){
                 }
             }
             addId(grid,containers)
+            grid.render.id = grid.id
+            grid.render.stageIndex = stage.children.length
             stage.addChild(grid.render)
         }
         setupGrid()
@@ -85,13 +91,17 @@ function setup(){
         addToken("Bob",["grid00","tile0306"])
         addToken("Bill",["grid00","tile0203"],2)
     }
-    function setupPointers(){}
+    function setupPointers(){
+        pointer = t.makePointer()
+        pointer.occupants ={}
+    }
 }
 
 function loop(){
     loopTokens()
     loopContainers()
     loopPointers()
+    t.update()
 
     function loopContainers(){}
     function loopTokens(){}
@@ -108,12 +118,16 @@ function addToken(type,location, size = 1){
         render: new PIXI.Sprite(
             loader.resources["images/tokens/KEVIN.png"].texture)
     }
+    console.log(token.render)
+    t.makeDraggable(token.render)
     token.render.scale.set(size*tileSize/token.render.width)
     let address = parseAddress(token.location[1])
     token.render.x = address[0]*tileSize
     token.render.y = address[1]*tileSize
     stage.addChild(token.render)
     addId(token,tokens)
+    token.render.id = token.id
+    token.render.stageIndex = stage.children.length
     containers[container][slot].occupants[token.id] = token
 }
 function moveToken(tokenId,destContainer,destSlot){
@@ -132,13 +146,14 @@ function moveToken(tokenId,destContainer,destSlot){
 
 }
 function deleteToken(tokenId){
-    let origin = tokens[tokenId].location
+    let token = tokens[tokenId]
+    let origin = token.location
+    token.render.parent.removeChild(token.render)
     delete containers[origin[0]][origin[1]].occupants[tokenId]
-    delete tokens[tokenId]
+    delete token
 
-    console.log(stage)
     
-
+    
 }
 
 //utility
