@@ -1,3 +1,8 @@
+/////
+//cleanup later
+let hilight, pointer, lastCoord
+/////
+
 let battleTracker = {}
 let bt = battleTracker
 
@@ -35,14 +40,14 @@ function setup(){
     setupStage()
     setupBackground()
     setupContainers()
-    setupTokens()
     setupPointers()
+    setupUI()
+    setupTokens()
     moveToken("Bob01","grid00","tile0707")
     deleteToken("Bob01")
-
     app.ticker.add(() => loop())
-
-
+    
+    
     function setupStage(){
         stage = new PIXI.Container()
         app.stage.addChild(stage)
@@ -64,7 +69,7 @@ function setup(){
                 render: new PIXI.Graphics()
             }
             grid.render.lineStyle(1, 0xFFFFFF, 0.5)
-
+            
             for (u = 0; u<gridWidth;u++){
                 for (v=0;v<gridHeight;v++){
                     let id = "tile" + hexify(u) + hexify(v)
@@ -95,17 +100,46 @@ function setup(){
         pointer = t.makePointer()
         pointer.occupants ={}
     }
+    function setupUI(){
+        hilight = new PIXI.Graphics()
+        hilight.beginFill(0xFFFFFF)
+        hilight.alpha = 0.5
+        hilight.drawRect(0,0,tileSize,tileSize)
+        hilight.endFill()
+        stage.addChild(hilight)
+    }
 }
 
 function loop(){
     loopTokens()
     loopContainers()
     loopPointers()
+    loopUI()
     t.update()
-
-    function loopContainers(){}
+    
+    function loopContainers(){
+    }
     function loopTokens(){}
     function loopPointers(){}
+    function loopUI(){
+        let u = parseInt(pointer.x/tileSize)
+        let v = parseInt(pointer.y/tileSize)
+        hilight.x = u*tileSize
+        hilight.y = v*tileSize
+        let address = "tile" + hexify(u) +hexify(v)
+        if(address !=lastCoord){
+            lastCoord = address
+            let occupants = containers.grid00[address].occupants
+            if(isEmpty(occupants)){
+                hilight.alpha = 0
+            }
+            else {
+                hilight.alpha = 0.5
+                
+                console.log(occupants)
+            }
+        }
+    }
 }
 function addToken(type,location, size = 1){
     // location: [%CONTAINER%,%SLOT%]
@@ -113,13 +147,25 @@ function addToken(type,location, size = 1){
     let slot = location[1]
     let token = {
         type: type,
-        location: location,
+        location: [location[0]],
         size: size,
         render: new PIXI.Sprite(
             loader.resources["images/tokens/KEVIN.png"].texture)
     }
-    console.log(token.render)
-    t.makeDraggable(token.render)
+    token.location.push(location[1])
+    let currentAddress = parseAddress(location[1])
+    for(i = 0; i < size; i++){
+        for(j = 0; j < size; j++){
+            let coLocation = 'tile' 
+            +hexify(currentAddress[0]+i)
+            +hexify(currentAddress[1]+j)
+            if(coLocation != location[1]) token.location.push(coLocation)
+        }
+        
+    }
+    console.log('location',token.location)
+   
+    // t.makeDraggable(token.render)
     token.render.scale.set(size*tileSize/token.render.width)
     let address = parseAddress(token.location[1])
     token.render.x = address[0]*tileSize
@@ -131,17 +177,20 @@ function addToken(type,location, size = 1){
     containers[container][slot].occupants[token.id] = token
 }
 function moveToken(tokenId,destContainer,destSlot){
-    let origin = tokens[tokenId].location
+    let token = tokens[tokenId]
+    let origin = token.location
     let originAddress = containers[origin[0]][origin[1]]
     let destinationAddress = containers[destContainer][destSlot]
     
-    tokens[tokenId].location = [destContainer, destSlot]
+    token.location = [destContainer, destSlot]
     
     destinationAddress.occupants[tokenId] = originAddress.occupants[tokenId]
     delete originAddress.occupants[tokenId]
 
-    tokens[tokenId].render.x = destinationAddress.u * tileSize
-    tokens[tokenId].render.y = destinationAddress.v * tileSize
+    token.render.x = destinationAddress.u * tileSize
+    token.render.y = destinationAddress.v * tileSize
+
+
 
 
 }
@@ -182,4 +231,12 @@ function hexify (input){
 function parseAddress (address) {
     return [Number(address.substr(address.length-4,2)),
             Number(address.substr(address.length-2,2))]
+}
+function isEmpty(obj) {
+    for(let prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true;
 }
