@@ -73,7 +73,7 @@ function setup(){
             
             for (u = 0; u<gridWidth;u++){
                 for (v=0;v<gridHeight;v++){
-                    let id = "tile" + hexify(u) + hexify(v)
+                    let id = "tile" + toHexString(u) + toHexString(v)
                     grid[id] = {
                         id:  id,
                         u: u,
@@ -127,7 +127,7 @@ function loop(){
         let v = parseInt(pointer.y/tileSize)
         hilight.x = u*tileSize
         hilight.y = v*tileSize
-        let address = "tile" + hexify(u) +hexify(v)
+        let address = "tile" + toHexString(u) +toHexString(v)
         if(address !=lastCoord){
             lastCoord = address
             let occupants = containers.grid00[address].occupants
@@ -158,8 +158,8 @@ function addToken(type,location, size = 1){
     for(i = 0; i < size; i++){
         for(j = 0; j < size; j++){
             let coLocation = 'tile' 
-            +hexify(currentAddress[0]+i)
-            +hexify(currentAddress[1]+j)
+            +toHexString(currentAddress[0]+i)
+            +toHexString(currentAddress[1]+j)
             if(coLocation != location[1]) token.location.push(coLocation)
         }
         
@@ -220,13 +220,13 @@ function createArray(length) {
 }
 function addId(object, destination){
     let index = 0
-    while(destination[object.type+hexify(index)] != undefined){
+    while(destination[object.type+toHexString(index)] != undefined){
         index++
     }
-    object.id = object.type+hexify(index)
-    destination[object.type+hexify(index)] = object
+    object.id = object.type+toHexString(index)
+    destination[object.type+toHexString(index)] = object
 }
-function hexify (input){
+function toHexString (input){
     return input.toString(16).padStart(2,0)
 }
 function parseAddress (address) {
