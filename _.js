@@ -5,7 +5,6 @@ register = {
         for(let index in thing.locations){
             let path = thing.locations[index]
             if(this.paths[path] == undefined){
-
                 this.paths[path] = {}
                 this.paths[path].occupants = {}
             }
@@ -14,11 +13,13 @@ register = {
         this.tags[thing.id] = thing
         return this
     },
-    move: function (tag,address) {
+    move: function (tag,addressTo,addressFrom) {
         let thing = register.findTag(tag)
         for(let index in thing.locations){
-            let location = register.findLocation(thing.locations[index])
-            let destination = register.findLocation(address)
+            //add check that origin address is correct?
+            //make "from" param optional
+            let location = register.findLocation(addressFrom)
+            let destination = register.findLocation(addressTo)
             destination.occupants[tag] = location.occupants[tag]
             delete location.occupants[tag]
             thing.locations[index] = address
@@ -50,13 +51,17 @@ thingProto = {
         return name+toHexString(index)
     },
     addThing: function(){},
-    moveThing: function(){},
+    moveThing: function(){
+        //add stuf to fix move
+    },
     scaleThing: function(){},
 }
 function createThing(name,location,size=1){
     const thing = Object.create(thingProto)
     thing.id = thing.generateId(name)
-    thing.locations = [location]
+    Array.isArray(location) 
+    ? thing.locations = location
+    : thing.locations = [location]
     thing.size = size
     register.add(thing,location)
 }
@@ -66,15 +71,8 @@ function toHexString (index){
     return index.toString(16).padStart(2,0)
 }
 
+createThing("bobby",["grid01_tile0111","grid01_tile0212"])
 
-createThing("bobby","grid01_tile0212")
-createThing("bobby","grid01_tile0212")
-createThing("billy","grid01_tile0212")
-createThing("kim","grid01_tile0000")
-let kim = register.findTag("kim00")
-register.move("kim00","grid01_tile0212")
-register.delete("bobby00")
-console.log(register)
-console.log(register.findLocation("grid01_tile0212").occupants)
-console.log(register.findTag("bobby01"))
+// const ft = register.findTag
 console.log(register.findTag("bobby00"))
+console.log(register)
