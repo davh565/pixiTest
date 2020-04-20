@@ -101,5 +101,5 @@ register
     .move("bobby00","grid01_tile0000","grid01_tile0212")
     .move("joe00","grid01_tile0111")
 
-// const ft = register.findTag
+// const ft = register.findTag d
 console.log(register)
